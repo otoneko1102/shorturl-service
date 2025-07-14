@@ -7,6 +7,8 @@ import * as captcha from "svg-captcha";
 import { randomUUID } from "crypto";
 
 import db from "./database.js";
+
+import { bannedDomains, isStrict } from "./lib/bannedDomains.js";
 import errorMessages from "./lib/errorMessages.js";
 
 const app = new Hono();
@@ -30,8 +32,7 @@ app.onError((err, c) => {
 
   if (err instanceof HTTPException) {
     const errorCode = err.message || "INTERNAL_SERVER_ERROR";
-    const friendlyMessage =
-      errorMessages[errorCode] || errorMessages.unknown;
+    const friendlyMessage = errorMessages[errorCode] || errorMessages.unknown;
 
     return c.json(
       {
@@ -95,10 +96,27 @@ app.post("/api/create", async (c) => {
   if (!url) {
     throw new HTTPException(400, { message: "URL_REQUIRED" });
   }
+  let parsedUrl;
   try {
-    new URL(url);
+    parsedUrl = new URL(url);
   } catch (error) {
     throw new HTTPException(400, { message: "URL_INVALID_FORMAT" });
+  }
+  if (parsedUrl.hostname === DOMAIN) {
+    throw new HTTPException(400, { message: "URL_BANNED" });
+  }
+  let isBanned = false;
+  if (isStrict) {
+    // Exact match
+    isBanned = bannedDomains.includes(parsedUrl.hostname);
+  } else {
+    // Partial match
+    isBanned = bannedDomains.some((bannedDomain) =>
+      parsedUrl.hostname.endsWith(bannedDomain)
+    );
+  }
+  if (isBanned) {
+    throw new HTTPException(400, { message: "URL_BANNED" });
   }
 
   if (alias) {

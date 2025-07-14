@@ -7,6 +7,7 @@ const errorMessages = {
   CAPTCHA_FAILED: "CAPTCHAの認証に失敗しました",
   URL_REQUIRED: "URLは必須です",
   URL_INVALID_FORMAT: "無効なURL形式です",
+  URL_BANNED: "このURLは短縮できません",
   ALIAS_INVALID_CHARACTERS: "カスタムIDに無効な文字が含まれています",
   ALIAS_ALREADY_EXISTS: "このカスタムIDは既に使用されています",
   DATABASE_INSERT_FAILED: "短縮リンクの作成に失敗しました",
