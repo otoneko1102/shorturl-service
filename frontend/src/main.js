@@ -1,5 +1,7 @@
 import "./style.css";
 
+const footer = document.getElementsByTagName("footer")[0];
+
 const form = document.getElementById("shorten-form");
 const urlInput = document.getElementById("url-input");
 const aliasInput = document.getElementById("alias-input");
@@ -13,6 +15,15 @@ const captchaInput = document.getElementById("captcha-input");
 const captchaSubmitButton = document.getElementById("captcha-submit");
 const captchaCancelButton = document.getElementById("captcha-cancel");
 const captchaError = document.getElementById("captcha-error");
+
+document.addEventListener("DOMContentLoaded", () => {
+  const repo = document.createElement("a");
+  repo.textContent = "GitHub Repo";
+  repo.href = "https://github.com/otoneko1102/shorturl-service";
+  repo.target = "_blank";
+
+  footer.appendChild(repo);
+});
 
 let captchaToken = "";
 
