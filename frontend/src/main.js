@@ -163,7 +163,7 @@ function displaySuccess(shortUrl) {
     try {
       document.execCommand("copy");
       const originalText = copyButton.textContent;
-      copyButton.textContent = "コピー完了！";
+      copyButton.textContent = "完了！";
       copyButton.disabled = true;
       setTimeout(() => {
         copyButton.textContent = originalText;
@@ -181,7 +181,7 @@ function displaySuccess(shortUrl) {
         .writeText(shortUrl)
         .then(() => {
           const originalText = copyButton.textContent;
-          copyButton.textContent = "コピー完了！";
+          copyButton.textContent = "完了！";
           copyButton.disabled = true;
           setTimeout(() => {
             copyButton.textContent = originalText;
