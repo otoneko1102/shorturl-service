@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@hono/node-server": "^1.15.0",
+    "better-sqlite3": "^12.2.0",
+    "dotenv": "^17.2.0",
+    "hono": "^4.8.4",
+    "nanoid": "^5.1.5",
+    "svg-captcha": "^1.4.0"
+  }
+}
