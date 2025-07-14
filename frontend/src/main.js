@@ -9,7 +9,6 @@ const clearButton = document.getElementById("clear-button");
 
 const captchaModal = document.getElementById("captcha-modal");
 const captchaImageContainer = document.getElementById("captcha-image");
-const reloadCaptchaButton = document.getElementById("reload-captcha");
 const captchaInput = document.getElementById("captcha-input");
 const captchaSubmitButton = document.getElementById("captcha-submit");
 const captchaCancelButton = document.getElementById("captcha-cancel");
