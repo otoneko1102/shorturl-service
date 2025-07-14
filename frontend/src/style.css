@@ -145,6 +145,7 @@ label {
   text-decoration: none;
   font-weight: bold;
   word-break: break-all;
+  font-size: 10px;
 }
 
 #copy-button {
