@@ -1,8 +1,15 @@
-# SHORT-URL SERVICE
+# SHORTURL SERVICE
 簡単に短縮URLサービスを構築するためのテンプレートです。  
 日本語用です。
 
+## Features
+- [x] URL Shortener
+- [x] Custom ID
+- [x] SSL & Redirect
+- [x] Captcha
+
 ## Setup
+以下の手順を踏むことで簡単に短縮リンクサービスを構築することができます。
 
 ### 0. Buy short domain(s) & Install packages
 説明は省きます。
