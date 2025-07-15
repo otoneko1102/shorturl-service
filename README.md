@@ -180,7 +180,8 @@ const bannedDomains = [
 export { bannedDomains, isStrict };
 ```
 
-# 5.2. Ban Alias
+#### 5.2. Ban Alias
+
 ```js
 // Example of backend/lib/bannedAlias.js
 
