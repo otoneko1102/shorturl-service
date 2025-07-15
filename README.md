@@ -174,7 +174,7 @@ const bannedDomains = [
  * e.g. isStrict
  *
  * true: Matches with "example.com"
- * false: Maches with "example.com", "foo.example.com", "bar.foo.example.com"
+ * false: Matches with "example.com", "foo.example.com", "bar.foo.example.com"
  */
 
 export { bannedDomains, isStrict };
