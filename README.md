@@ -160,7 +160,7 @@ sudo systemctl restart nginx
 
 ### 5. Optional
 
-#### 5.1 Ban Domains
+#### 5.1. Ban Domains
 
 ```js
 // Example of backend/lib/bannedDomains.js
