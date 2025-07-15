@@ -157,3 +157,25 @@ sudo certbot --nginx -d %DOMAIN% -d www.%DOMAIN%
 sudo nginx -t
 sudo systemctl restart nginx
 ```
+
+### 5. Optional
+
+#### 5.1 Ban Domains
+
+```js
+// Example of backend/lib/bannedDomains.js
+
+const isStrict = false; // true: Exact match / false: Partial match
+const bannedDomains = [
+  "example.com"
+];
+
+/**
+ * e.g. isStrict
+ *
+ * true: Matches with "example.com"
+ * false: Maches with "example.com", "foo.example.com", "bar.foo.example.com"
+ */
+
+export { bannedDomains, isStrict };
+```
