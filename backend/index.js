@@ -112,7 +112,7 @@ app.post("/api/create", async (c) => {
   } else {
     // Partial match
     isBanned = bannedDomains.some((bannedDomain) =>
-      parsedUrl.hostname.endsWith(bannedDomain)
+      `.${parsedUrl.hostname}`.endsWith(`.${bannedDomain}`)
     );
   }
   if (isBanned) {
