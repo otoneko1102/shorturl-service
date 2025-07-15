@@ -1,0 +1,3 @@
+const bannedAlias = [];
+
+export { bannedAlias };

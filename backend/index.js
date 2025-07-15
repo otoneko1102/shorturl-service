@@ -9,6 +9,7 @@ import { randomUUID } from "crypto";
 import db from "./database.js";
 
 import { bannedDomains, isStrict } from "./lib/bannedDomains.js";
+import { bannedAlias } from "./lib/bannedAlias.js";
 import errorMessages from "./lib/errorMessages.js";
 
 const app = new Hono();
@@ -105,17 +106,17 @@ app.post("/api/create", async (c) => {
   if (parsedUrl.hostname === DOMAIN) {
     throw new HTTPException(400, { message: "URL_BANNED" });
   }
-  let isBanned = false;
+  let isBannedDomain = false;
   if (isStrict) {
     // Exact match
-    isBanned = bannedDomains.includes(parsedUrl.hostname);
+    isBannedDomain = bannedDomains.includes(parsedUrl.hostname);
   } else {
     // Partial match
-    isBanned = bannedDomains.some((bannedDomain) =>
+    isBannedDomain = bannedDomains.some((bannedDomain) =>
       `.${parsedUrl.hostname}`.endsWith(`.${bannedDomain}`)
     );
   }
-  if (isBanned) {
+  if (isBannedDomain) {
     throw new HTTPException(400, { message: "URL_BANNED" });
   }
 
@@ -123,6 +124,15 @@ app.post("/api/create", async (c) => {
     if (!/^[a-zA-Z0-9-_]+$/.test(alias)) {
       throw new HTTPException(400, { message: "ALIAS_INVALID_CHARACTERS" });
     }
+    if (alias.toLowerCase() === "api") {
+      throw new HTTPException(400, { message: "ALIAS_BANNED" });
+    }
+    let isBannedAlias = false;
+    isBannedAlias = bannedAlias.includes(alias.toLowerCase());
+    if (isBannedAlias) {
+      throw new HTTPException(400, { message: "ALIAS_BANNED" });
+    }
+
     const stmt = db.prepare("SELECT id FROM urls WHERE id = ?");
     const existing = stmt.get(alias);
     if (existing) {
