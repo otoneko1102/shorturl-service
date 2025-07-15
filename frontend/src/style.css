@@ -27,7 +27,6 @@ footer {
   height: 20px;
   position: fixed;
   background-color: var(--container-bg);
-  padding: 20px;
   text-align: center;
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
 }
