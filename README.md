@@ -5,6 +5,7 @@
 ## Features
 - [x] URL Shortener
 - [x] Custom ID
+- [x] Punycode
 - [x] Ban Domains
 - [x] SSL & Redirect
 - [x] Captcha
