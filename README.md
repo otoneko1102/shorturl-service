@@ -11,6 +11,8 @@
 - [x] Captcha
 - [x] URL Shortener API
 
+*API Referenceは[こちら](https://github.com/otoneko1102/shorturl-service/blob/main/API_REFERENCE.md)。
+
 ## Setup
 以下の手順を踏むことで簡単に短縮リンクサービスを構築することができます。
 
