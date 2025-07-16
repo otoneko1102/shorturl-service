@@ -2,6 +2,7 @@ import "dotenv/config";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { HTTPException } from "hono/http-exception";
+import * as punycode from "punycode";
 import { nanoid } from "nanoid";
 import * as captcha from "svg-captcha";
 import { randomUUID } from "crypto";
@@ -11,6 +12,8 @@ import db from "./database.js";
 import { bannedDomains, isStrict } from "./lib/bannedDomains.js";
 import { bannedAlias } from "./lib/bannedAlias.js";
 import errorMessages from "./lib/errorMessages.js";
+
+const domainRegex = /^((?:[a-z0-9][a-z0-9-]*[a-z0-9]*|xn--[a-z0-9-]+)\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/;
 
 const app = new Hono();
 const PORT = parseInt(process.env.PORT || "2045", 10);
@@ -75,7 +78,23 @@ app.get("/api/captcha", (c) => {
 });
 
 app.post("/api/create", async (c) => {
-  const { url, alias, captchaToken, captchaAnswer, key } = await c.req.json();
+  let isInvalid = false;
+  const body = await c.req.json();
+  if (body.url) {
+    try {
+      const obj = new URL(body.url);
+      const hostname = punycode.toASCII(obj.hostname);
+      obj.hostname = hostname;
+      body.url = obj.href;
+
+      if (body.url.endsWith("/")) body.url = body.url.slice(0, -1);
+    } catch (error) {
+      isInvalid = true;
+    }
+  }
+  const { url, alias, captchaToken, captchaAnswer, key } = body;
+
+  console.log(url)
 
   if (!key && (!captchaToken || !captchaAnswer)) {
     throw new HTTPException(400, { message: "CAPTCHA_MISSING" });
@@ -113,6 +132,9 @@ app.post("/api/create", async (c) => {
   try {
     parsedUrl = new URL(url);
   } catch (error) {
+    throw new HTTPException(400, { message: "URL_INVALID_FORMAT" });
+  }
+  if (!domainRegex.test(parsedUrl.hostname)) {
     throw new HTTPException(400, { message: "URL_INVALID_FORMAT" });
   }
   if (parsedUrl.hostname === DOMAIN) {
