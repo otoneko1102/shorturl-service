@@ -82,11 +82,11 @@ app.post("/api/create", async (c) => {
   let isInvalid = false;
   const body = await c.req.json();
   if (body.url) {
-    try {
-      if (bannedWords.some(word => body.url.includes(word))) {
-        throw new HTTPException(400, { message: "URL_BANNED" });
-      }
+    if (bannedWords.some(word => body.url.includes(word))) {
+      throw new HTTPException(400, { message: "URL_BANNED" });
+    }
 
+    try {
       const obj = new URL(body.url);
       const hostname = punycode.toASCII(obj.hostname);
       obj.hostname = hostname;
