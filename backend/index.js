@@ -77,7 +77,7 @@ app.get("/api/captcha", (c) => {
 app.post("/api/create", async (c) => {
   const { url, alias, captchaToken, captchaAnswer, key } = await c.req.json();
 
-  if (!captchaToken || !captchaAnswer) {
+  if (!key && (!captchaToken || !captchaAnswer)) {
     throw new HTTPException(400, { message: "CAPTCHA_MISSING" });
   } else if (captchaToken && captchaAnswer) {
     const storedCaptcha = captchaStore.get(captchaToken);
@@ -155,7 +155,7 @@ app.post("/api/create", async (c) => {
     const existingUrl = stmt.get(url);
     if (existingUrl) {
       const shortUrl = `https://${DOMAIN}/${existingUrl.id}`;
-      return c.json({ shortUrl });
+      return c.json({ url: shortUrl });
     }
   }
 
@@ -167,7 +167,7 @@ app.post("/api/create", async (c) => {
     );
     stmt.run(id, url);
     const shortUrl = `https://${DOMAIN}/${id}`;
-    return c.json({ shortUrl });
+    return c.json({ url: shortUrl });
   } catch (err) {
     throw new HTTPException(500, { message: "DATABASE_INSERT_FAILED" });
   }

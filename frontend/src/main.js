@@ -82,7 +82,7 @@ async function submitShortenRequest() {
     const data = await response.json();
 
     if (response.ok) {
-      displaySuccess(data.shortUrl);
+      displaySuccess(data.url);
     } else {
       const errorMessage =
         data.error?.message || "不明なエラーが発生しました。";
