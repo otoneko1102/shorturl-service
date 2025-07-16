@@ -14,7 +14,8 @@ import { bannedAlias } from "./lib/bannedAlias.js";
 import { bannedWords } from "./lib/bannedWords.js";
 import errorMessages from "./lib/errorMessages.js";
 
-const domainRegex = /^((?:[a-z0-9][a-z0-9-]*[a-z0-9]*|xn--[a-z0-9-]+)\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/;
+const domainRegex =
+  /^((?:[a-z0-9][a-z0-9-]*[a-z0-9]*|xn--[a-z0-9-]+)\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/;
 
 const app = new Hono();
 const PORT = parseInt(process.env.PORT || "2045", 10);
@@ -82,7 +83,7 @@ app.post("/api/create", async (c) => {
   let isInvalid = false;
   const body = await c.req.json();
   if (body.url) {
-    if (bannedWords.some(word => body.url.includes(word))) {
+    if (bannedWords.some((word) => body.url.includes(word))) {
       throw new HTTPException(400, { message: "URL_BANNED" });
     }
 
