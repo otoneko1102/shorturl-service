@@ -94,8 +94,6 @@ app.post("/api/create", async (c) => {
   }
   const { url, alias, captchaToken, captchaAnswer, key } = body;
 
-  console.log(url)
-
   if (!key && (!captchaToken || !captchaAnswer)) {
     throw new HTTPException(400, { message: "CAPTCHA_MISSING" });
   } else if (captchaToken && captchaAnswer) {
