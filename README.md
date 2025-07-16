@@ -52,7 +52,7 @@ API_KEY="XXXXXX"
 
 ```conf
 # Example of frontend/.env
-VITE_SERVICE_NAME="example URL Shortener"
+VITE_SERVICE_NAME="URL Shortener"
 VITE_SERVICE_DESCRIPTION="シンプルで高速な短縮URLサービス"
 ```
 
