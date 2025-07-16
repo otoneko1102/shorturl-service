@@ -16,6 +16,8 @@ const app = new Hono();
 const PORT = parseInt(process.env.PORT || "2045", 10);
 const DOMAIN = process.env.DOMAIN || "oto.im";
 
+const API_KEY = process.env.API_KEY;
+
 const captchaStore = new Map();
 const CAPTCHA_EXPIRATION = 5 * 60 * 1000;
 
@@ -73,25 +75,35 @@ app.get("/api/captcha", (c) => {
 });
 
 app.post("/api/create", async (c) => {
-  const { url, alias, captchaToken, captchaAnswer } = await c.req.json();
+  const { url, alias, captchaToken, captchaAnswer, key } = await c.req.json();
 
   if (!captchaToken || !captchaAnswer) {
     throw new HTTPException(400, { message: "CAPTCHA_MISSING" });
-  }
+  } else if (captchaToken && captchaAnswer) {
+    const storedCaptcha = captchaStore.get(captchaToken);
+    captchaStore.delete(captchaToken);
 
-  const storedCaptcha = captchaStore.get(captchaToken);
-  captchaStore.delete(captchaToken);
+    if (!storedCaptcha) {
+      throw new HTTPException(403, { message: "CAPTCHA_INVALID_TOKEN" });
+    }
 
-  if (!storedCaptcha) {
-    throw new HTTPException(403, { message: "CAPTCHA_INVALID_TOKEN" });
-  }
+    if (Date.now() - storedCaptcha.timestamp > CAPTCHA_EXPIRATION) {
+      throw new HTTPException(403, { message: "CAPTCHA_EXPIRED" });
+    }
 
-  if (Date.now() - storedCaptcha.timestamp > CAPTCHA_EXPIRATION) {
-    throw new HTTPException(403, { message: "CAPTCHA_EXPIRED" });
-  }
+    if (storedCaptcha.answer.toLowerCase() !== captchaAnswer.toLowerCase()) {
+      throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
+    }
+  } else if (API_KEY) {
+    if (!key) {
+      throw new HTTPException(400, { message: "API_MISSING" });
+    }
 
-  if (storedCaptcha.answer.toLowerCase() !== captchaAnswer.toLowerCase()) {
-    throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
+    if (key && key !== API_KEY) {
+      throw new HTTPException(403, { message: "API_INVALID_KEY" });
+    }
+  } else {
+    throw new HTTPException(400, { message: "ACCESS_MISSING" });
   }
 
   if (!url) {

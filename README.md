@@ -8,6 +8,7 @@
 - [x] Ban Domains
 - [x] SSL & Redirect
 - [x] Captcha
+- [x] URL Shortener API
 
 ## Setup
 以下の手順を踏むことで簡単に短縮リンクサービスを構築することができます。
@@ -43,6 +44,7 @@ git clone https://github.com/otoneko1102/shorturl-service.git
 PORT=3000
 DOMAIN="example.com"
 DATABASE_PATH="./lib/database.db"
+API_KEY="XXXXXX"
 ```
 
 ```conf
