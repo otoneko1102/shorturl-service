@@ -132,7 +132,7 @@ app.post("/api/create", async (c) => {
   } catch (error) {
     throw new HTTPException(400, { message: "URL_INVALID_FORMAT" });
   }
-  if (!domainRegex.test(parsedUrl.hostname)) {
+  if (isInvalid || !domainRegex.test(parsedUrl.hostname)) {
     throw new HTTPException(400, { message: "URL_INVALID_FORMAT" });
   }
   if (parsedUrl.hostname === DOMAIN) {
