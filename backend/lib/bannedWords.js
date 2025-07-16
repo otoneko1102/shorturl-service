@@ -1,0 +1,3 @@
+const bannedWords = [];
+
+export { bannedWords };

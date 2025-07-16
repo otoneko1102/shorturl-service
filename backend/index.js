@@ -11,6 +11,7 @@ import db from "./database.js";
 
 import { bannedDomains, isStrict } from "./lib/bannedDomains.js";
 import { bannedAlias } from "./lib/bannedAlias.js";
+import { bannedWords } from "./lib/bannedWords.js";
 import errorMessages from "./lib/errorMessages.js";
 
 const domainRegex = /^((?:[a-z0-9][a-z0-9-]*[a-z0-9]*|xn--[a-z0-9-]+)\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/;
@@ -82,6 +83,10 @@ app.post("/api/create", async (c) => {
   const body = await c.req.json();
   if (body.url) {
     try {
+      if (bannedWords.some(word => body.url.includes(word))) {
+        throw new HTTPException(400, { message: "URL_BANNED" });
+      }
+
       const obj = new URL(body.url);
       const hostname = punycode.toASCII(obj.hostname);
       obj.hostname = hostname;

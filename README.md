@@ -6,7 +6,7 @@
 - [x] URL Shortener
 - [x] Custom ID
 - [x] Punycode
-- [x] Ban Domains
+- [x] Ban Alias & Domains & Words
 - [x] SSL & Redirect
 - [x] Captcha
 - [x] URL Shortener API
