@@ -9,6 +9,7 @@ import axios from "axios";
 import { randomUUID } from "crypto";
 
 import db from "./database.js";
+import isUserBanned from "./isUserBanned.js";
 
 import config from "./lib/config.js";
 import { bannedDomains, isStrict } from "./lib/bannedDomains.js";
@@ -21,7 +22,7 @@ const domainRegex =
 
 const app = new Hono();
 const PORT = parseInt(process.env.PORT || "2045", 10);
-const DOMAIN = process.env.DOMAIN || "oto.im";
+const DOMAIN = process.env.DOMAIN;
 
 const API_KEY = process.env.API_KEY;
 
@@ -83,6 +84,7 @@ app.get("/api/captcha", (c) => {
 
 app.post("/api/create", async (c) => {
   let isInvalid = false;
+  let isFailed = false;
   const body = await c.req.json();
   if (body.url) {
     if (bannedWords.some((word) => body.url.includes(word))) {
@@ -117,29 +119,45 @@ app.post("/api/create", async (c) => {
     }
 
     if (storedCaptcha.answer.toLowerCase() !== captchaAnswer.toLowerCase()) {
-      throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
+      isFailed = true;
     }
 
     if (!token) {
       throw new HTTPException(403, { message: "CAPTCHA_INVALID_TOKEN" });
     }
 
-    try {
-      const response = await axios.post(config.CAPTCHA_API, {
-        token,
-      });
-      const data = response.data;
+    const response = await axios.post(config.CAPTCHA_API, {
+      token,
+    });
+    const data = response?.data || null;
 
-      if (data) {
-        if (!data.pass || data.risk_rate == "bot") {
-          throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
-        }
-      } else {
-        throw new HTTPException(500, { message: "INTERNAL_SERVER_ERROR" });
+    if (200 <= response.status && response.status < 300 && data) {
+      const hashedIp = data.user_data.ip;
+      const success = data.pass && data.risk_rate !== "bot";
+      const scoreChange = !isFailed && success ? 1 : 0;
+
+      const stmt = db.prepare(`
+        INSERT INTO users (id, score, count)
+        VALUES (?, ?, 1)
+        ON CONFLICT(id) DO UPDATE SET
+          score = score + excluded.score,
+          count = count + 1,
+          created_at = CURRENT_TIMESTAMP
+      `);
+      stmt.run(hashedIp, scoreChange);
+
+      if (isUserBanned(hashedIp)) {
+        throw new HTTPException(403, { message: "YOU_ARE_BANNED" });
       }
-    } catch (error) {
-      console.error(error);
+      if (!success) {
+        throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
+      }
+    } else {
       throw new HTTPException(500, { message: "INTERNAL_SERVER_ERROR" });
+    }
+
+    if (isFailed) {
+      throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
     }
   } else if (API_KEY) {
     if (!key) {
