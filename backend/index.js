@@ -5,10 +5,12 @@ import { HTTPException } from "hono/http-exception";
 import * as punycode from "punycode";
 import { nanoid } from "nanoid";
 import * as captcha from "svg-captcha";
+import axios from "axios";
 import { randomUUID } from "crypto";
 
 import db from "./database.js";
 
+import config from "./lib/config.js";
 import { bannedDomains, isStrict } from "./lib/bannedDomains.js";
 import { bannedAlias } from "./lib/bannedAlias.js";
 import { bannedWords } from "./lib/bannedWords.js";
@@ -94,11 +96,11 @@ app.post("/api/create", async (c) => {
       body.url = obj.href;
 
       if (body.url.endsWith("/")) body.url = body.url.slice(0, -1);
-    } catch (error) {
+    } catch {
       isInvalid = true;
     }
   }
-  const { url, alias, captchaToken, captchaAnswer, key } = body;
+  const { url, alias, captchaToken, captchaAnswer, token, key } = body;
 
   if (!key && (!captchaToken || !captchaAnswer)) {
     throw new HTTPException(400, { message: "CAPTCHA_MISSING" });
@@ -116,6 +118,28 @@ app.post("/api/create", async (c) => {
 
     if (storedCaptcha.answer.toLowerCase() !== captchaAnswer.toLowerCase()) {
       throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
+    }
+
+    if (!token) {
+      throw new HTTPException(403, { message: "CAPTCHA_INVALID_TOKEN" });
+    }
+
+    try {
+      const response = await axios.post(config.CAPTCHA_API, {
+        token,
+      });
+      const data = response.data;
+
+      if (data) {
+        if (!data.pass || data.risk_rate == "bot") {
+          throw new HTTPException(403, { message: "CAPTCHA_FAILED" });
+        }
+      } else {
+        throw new HTTPException(500, { message: "INTERNAL_SERVER_ERROR" });
+      }
+    } catch (error) {
+      console.error(error);
+      throw new HTTPException(500, { message: "INTERNAL_SERVER_ERROR" });
     }
   } else if (API_KEY) {
     if (!key) {
