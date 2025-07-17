@@ -69,7 +69,6 @@ async function submitShortenRequest() {
     nonstress.generateToken();
 
     const token = await nonstress.getToken();
-    console.log(token);
     const response = await fetch("/api/create", {
       method: "POST",
       headers: {
