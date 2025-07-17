@@ -6,7 +6,7 @@ function isUserBanned(hashedIp) {
   const entry = stmt.get(hashedIp);
 
   if (entry) {
-    const isBanned = entry.count - entry.score >= parseInt(process.env.BAN_SCORE, 10);
+    const isBanned = entry.count - entry.score >= parseInt(process.env.BAN_SCORE || 10, 10);
     return isBanned;
   } else {
     return true;

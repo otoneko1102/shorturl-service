@@ -47,6 +47,7 @@ git clone https://github.com/otoneko1102/shorturl-service.git
 PORT=3000
 DOMAIN="example.com"
 DATABASE_PATH="./lib/database.db"
+BAN_SCORE=10
 API_KEY="XXXXXX"
 ```
 
