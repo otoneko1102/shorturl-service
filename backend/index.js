@@ -250,7 +250,8 @@ app.get("*", (c) => {
   if (row) {
     return c.redirect(row.original_url, 301);
   }
-  return c.notFound();
+  // return c.notFound();
+  return c.redirect("/", 302);
 });
 
 console.log(`Backend is running on http://localhost:${PORT}`);
