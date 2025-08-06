@@ -67,6 +67,53 @@ app.onError((err, c) => {
   );
 });
 
+const generateDummyOptions = (correctAnswer, count) => {
+  const dummies = new Set();
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const length = correctAnswer.length;
+
+  while (dummies.size < count) {
+    let dummy = "";
+    for (let i = 0; i < length; i++) {
+      dummy += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    if (dummy !== correctAnswer && !dummies.has(dummy)) {
+      dummies.add(dummy);
+    }
+  }
+  return Array.from(dummies);
+};
+
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+app.get("/api/captcha", (c) => {
+  const captchaData = captcha.create({
+    size: 6,
+    noise: 3,
+    color: true,
+    background: "#f9f9f9",
+  });
+  const token = randomUUID();
+
+  const dummyOptions = generateDummyOptions(captchaData.text, 3);
+
+  const options = shuffleArray([captchaData.text, ...dummyOptions]);
+
+  captchaStore.set(token, {
+    answer: captchaData.text,
+    timestamp: Date.now(),
+  });
+
+  return c.json({ token: token, image: captchaData.data, options: options });
+});
+
 app.get("/api/captcha", (c) => {
   const captchaData = captcha.create({
     size: 6,

@@ -69,23 +69,17 @@
     <div id="captcha-modal" class="modal">
       <div class="modal-content">
         <h3>Captcha</h3>
-        <p>画像に表示されている文字を入力してください。</p>
+        <p>画像に表示されている文字列を、下の選択肢から選んでください。</p>
         <div class="captcha-area">
           <div id="captcha-image"></div>
         </div>
-        <input
-          type="text"
-          id="captcha-input"
-          placeholder="Pass Captcha"
-          autocomplete="off"
-        />
-        <button type="button" id="captcha-submit" class="submit-button">
-          認証
-        </button>
+
+        <div id="captcha-options"></div>
+
+        <p id="captcha-error"></p>
         <button type="button" id="captcha-cancel" class="submit-button">
           キャンセル
         </button>
-        <p id="captcha-error"></p>
       </div>
     </div>
 

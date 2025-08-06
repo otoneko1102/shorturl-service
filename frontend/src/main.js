@@ -1,7 +1,6 @@
 import "./style.css";
 
 const footer = document.getElementsByTagName("footer")[0];
-
 const form = document.getElementById("shorten-form");
 const urlInput = document.getElementById("url-input");
 const aliasInput = document.getElementById("alias-input");
@@ -11,8 +10,7 @@ const clearButton = document.getElementById("clear-button");
 
 const captchaModal = document.getElementById("captcha-modal");
 const captchaImageContainer = document.getElementById("captcha-image");
-const captchaInput = document.getElementById("captcha-input");
-const captchaSubmitButton = document.getElementById("captcha-submit");
+const captchaOptionsContainer = document.getElementById("captcha-options");
 const captchaCancelButton = document.getElementById("captcha-cancel");
 const captchaError = document.getElementById("captcha-error");
 
@@ -21,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   repo.textContent = "GitHub Repo";
   repo.href = "https://github.com/otoneko1102/shorturl-service";
   repo.target = "_blank";
-
   footer.appendChild(repo);
 });
 
@@ -37,6 +34,7 @@ async function fetchAndShowCaptcha() {
   submitButton.disabled = true;
   captchaError.textContent = "";
   captchaImageContainer.innerHTML = "読み込み中...";
+  captchaOptionsContainer.innerHTML = "";
 
   try {
     const response = await fetch("/api/captcha");
@@ -48,9 +46,18 @@ async function fetchAndShowCaptcha() {
     captchaToken = data.token;
     captchaImageContainer.innerHTML = data.image;
 
+    data.options.forEach((optionText) => {
+      const button = document.createElement("button");
+      button.textContent = optionText;
+      button.type = "button";
+      button.classList.add("captcha-option-button");
+      button.addEventListener("click", () => {
+        submitShortenRequest(optionText);
+      });
+      captchaOptionsContainer.appendChild(button);
+    });
+
     captchaModal.style.display = "flex";
-    captchaInput.value = "";
-    captchaInput.focus();
     resetSubmitButton();
     submitButton.textContent = "認証中...";
     submitButton.disabled = true;
@@ -60,14 +67,13 @@ async function fetchAndShowCaptcha() {
   }
 }
 
-async function submitShortenRequest() {
+async function submitShortenRequest(captchaAnswer) {
   submitButton.textContent = "生成中...";
   submitButton.disabled = true;
   captchaModal.style.display = "none";
 
   try {
     nonstress.generateToken();
-
     const token = await nonstress.getToken();
     const response = await fetch("/api/create", {
       method: "POST",
@@ -78,8 +84,8 @@ async function submitShortenRequest() {
         url: urlInput.value,
         alias: aliasInput.value || null,
         captchaToken: captchaToken,
-        captchaAnswer: captchaInput.value,
-        token
+        captchaAnswer: captchaAnswer,
+        token,
       }),
     });
 
@@ -116,14 +122,6 @@ clearButton.addEventListener("click", () => {
   resultArea.innerHTML = "";
 });
 
-captchaSubmitButton.addEventListener("click", () => {
-  if (!captchaInput.value.trim()) {
-    captchaError.textContent = "文字を入力してください。";
-    return;
-  }
-  submitShortenRequest();
-});
-
 captchaCancelButton.addEventListener("click", () => {
   captchaModal.style.display = "none";
   resetSubmitButton();
@@ -133,13 +131,6 @@ window.addEventListener("click", (e) => {
   if (e.target === captchaModal) {
     captchaModal.style.display = "none";
     resetSubmitButton();
-  }
-});
-
-captchaInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    captchaSubmitButton.click();
   }
 });
 
@@ -158,9 +149,8 @@ function displaySuccess(shortUrl) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
     textArea.style.position = "fixed";
-    textArea.style.top = 0;
-    textArea.style.left = 0;
-    textArea.style.background = "transparent";
+    textArea.style.top = "-9999px";
+    textArea.style.left = "-9999px";
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
@@ -179,6 +169,7 @@ function displaySuccess(shortUrl) {
     }
     document.body.removeChild(textArea);
   };
+
   copyButton.addEventListener("click", () => {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard
@@ -194,7 +185,7 @@ function displaySuccess(shortUrl) {
         })
         .catch((err) => {
           console.error("Copy failed", err);
-          alert("コピーに失敗しました。");
+          fallbackCopy(shortUrl);
         });
     } else {
       fallbackCopy(shortUrl);
