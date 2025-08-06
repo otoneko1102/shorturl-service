@@ -197,3 +197,14 @@ const bannedAlias = [
 
 export { bannedAlias };
 ```
+
+#### 5.3. Ban Words
+
+```js
+// Example of backend/lib/bannedWords.js
+const bannedWords = [
+  "example"
+];
+
+export { bannedWords };
+```
