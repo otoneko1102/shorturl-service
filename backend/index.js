@@ -289,15 +289,34 @@ app.post("/api/create", async (c) => {
 });
 
 app.get("*", (c) => {
-  const id = c.req.path.substring(1);
+  const requestUrl = new URL(c.req.url);
+  const path = requestUrl.pathname;
+
+  const id = path.substring(1);
+
   if (id.startsWith("api") || id === "") {
     return c.notFound();
   }
+
   const row = db.prepare("SELECT original_url FROM urls WHERE id = ?").get(id);
+
   if (row) {
-    return c.redirect(row.original_url, 301);
+    const finalUrlObject = new URL(row.original_url);
+
+    if (requestUrl.search) {
+      const requestSearchParams = new URLSearchParams(requestUrl.search);
+      requestSearchParams.forEach((value, key) => {
+        finalUrlObject.searchParams.append(key, value);
+      });
+    }
+
+    if (requestUrl.hash) {
+      finalUrlObject.hash = requestUrl.hash;
+    }
+
+    return c.redirect(finalUrlObject.toString(), 301);
   }
-  // return c.notFound();
+
   return c.redirect("/", 302);
 });
 
