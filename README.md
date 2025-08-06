@@ -9,6 +9,7 @@
 - [x] Ban IPs & Alias & Domains & Words
 - [x] SSL & Redirect
 - [x] Captcha
+- [x] Supports parameters & hashes
 - [x] URL Shortener API
 
 *API Referenceは[こちら](https://github.com/otoneko1102/shorturl-service/blob/main/API_REFERENCE.md)。
