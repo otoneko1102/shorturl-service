@@ -1,34 +1,44 @@
 # API Reference
 
 ## API Root
-```
+
+```text
 /api
 ```
 
 ## How to use?
 
 ### Captcha
+
 このエンドポイントはサイト側以外からの呼び出しをするべきではありません。
 
 ### Create
-```
+
+```text
 POST /create
 ```
+
 #### Request Body
+
 application/json:
+
 ```json
 {
   "url": "https://example.com",
   "key": "YOUR_API_KEY"
 }
 ```
+
 #### Response
+
 ```json
 { "url": "https://%DOMAIN%/%ID%" }
 ```
 
 #### Example
+
 axios:
+
 ```js
 import axios from "axios";
 
@@ -48,7 +58,9 @@ import axios from "axios";
   }
 })();
 ```
+
 node-fetch:
+
 ```js
 import fetch from "node-fetch";
 

@@ -1,8 +1,10 @@
 # SHORTURL SERVICE
+
 簡単に短縮URLサービスを構築するためのテンプレートです。  
 日本語用です。
 
 ## Features
+
 - [x] URL Shortener
 - [x] Custom ID
 - [x] Punycode
@@ -15,17 +17,21 @@
 *API Referenceは[こちら](https://github.com/otoneko1102/shorturl-service/blob/main/API_REFERENCE.md)。
 
 ## Setup
+
 以下の手順を踏むことで簡単に短縮リンクサービスを構築することができます。
 
 ### 0. Buy short domain(s) & Install packages
+
 説明は省きます。
 
 #### Required environment
+
 | Name | Version |
 | :-- | :-- |
 | Ubuntu | v22.04 |
 
 #### Required packages
+
 | Name | Version |
 | :-- | :-- |
 | Git | v2.43.x |
@@ -36,11 +42,13 @@
 | Certbot | v2.9.x |
 
 ### 1. Clone repo
+
 ```bash
 git clone https://github.com/otoneko1102/shorturl-service.git
 ```
 
 ### 2. Edit .env
+
 以下の例のように作成します。
 
 ```conf
@@ -59,8 +67,10 @@ VITE_SERVICE_DESCRIPTION="シンプルで高速な短縮URLサービス"
 ```
 
 ### 3. Run commands
+
 以下のコマンドを順に実行します。
 pm2の `--name` はオプションです。
+
 ```bash
 cd shorturl-service
 cd frontend
@@ -73,9 +83,11 @@ pm2 start index.js --name shorturl-service
 ```
 
 ### 4. Edit nginx
+
 自宅サーバーやレンタルサーバーで動かすための設定です。
 
 #### 4.1. Edit server settings
+
 `%DOMAIN%`, `%PORT%` を実際のものに置き換えてください。  
 `/etc/nginx/sites-available/%DOMAIN%` を編集します。  
 以下は一例です。  
@@ -152,6 +164,7 @@ server {
 ```
 
 #### 4.2. Apply config
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/%DOMAIN% /etc/nginx/sites-enabled/
 sudo nginx -t
@@ -159,6 +172,7 @@ sudo systemctl restart nginx
 ```
 
 #### 4.3. Apply Certbot
+
 ```bash
 sudo certbot --nginx -d %DOMAIN% -d www.%DOMAIN%
 sudo nginx -t
