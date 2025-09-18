@@ -1,5 +1,7 @@
 # SHORTURL SERVICE
 
+<a href="https://www.buymeacoffee.com/debuloper" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 簡単に短縮URLサービスを構築するためのテンプレートです。  
 日本語用です。
 
@@ -223,3 +225,6 @@ const bannedWords = [
 
 export { bannedWords };
 ```
+
+#### 5.3. Ban Domains
+
