@@ -3,4 +3,3 @@ build/
 test/
 .env
 *.db
-package-lock.json

@@ -1,12 +1,13 @@
-import "./style.css";
-
+---
+---
+<script>
 const footer = document.getElementsByTagName("footer")[0];
 const form = document.getElementById("shorten-form");
-const urlInput = document.getElementById("url-input");
-const aliasInput = document.getElementById("alias-input");
+const urlInput = document.getElementById("url-input") as HTMLInputElement;
+const aliasInput = document.getElementById("alias-input") as HTMLInputElement;
 const resultArea = document.getElementById("result-area");
-const submitButton = document.getElementById("submit-button");
-const clearButton = document.getElementById("clear-button");
+const submitButton = document.getElementById("submit-button") as HTMLButtonElement;
+const clearButton = document.getElementById("clear-button") as HTMLButtonElement;
 
 const captchaModal = document.getElementById("captcha-modal");
 const captchaImageContainer = document.getElementById("captcha-image");
@@ -73,8 +74,8 @@ async function submitShortenRequest(captchaAnswer) {
   captchaModal.style.display = "none";
 
   try {
-    nonstress.generateToken();
-    const token = await nonstress.getToken();
+    window.nonstress.generateToken();
+    const token = await window.nonstress.getToken();
     const response = await fetch("/api/create", {
       method: "POST",
       headers: {
@@ -144,7 +145,7 @@ function displaySuccess(shortUrl) {
       </div>
     </div>
   `;
-  const copyButton = document.getElementById("copy-button");
+  const copyButton = document.getElementById("copy-button") as HTMLButtonElement;
   const fallbackCopy = (text) => {
     const textArea = document.createElement("textarea");
     textArea.value = text;
@@ -160,7 +161,7 @@ function displaySuccess(shortUrl) {
       copyButton.textContent = "完了！";
       copyButton.disabled = true;
       setTimeout(() => {
-        copyButton.textContent = originalText;
+        copyButton.textContent = "コピー";
         copyButton.disabled = false;
       }, 2000);
     } catch (err) {
@@ -179,7 +180,7 @@ function displaySuccess(shortUrl) {
           copyButton.textContent = "完了！";
           copyButton.disabled = true;
           setTimeout(() => {
-            copyButton.textContent = originalText;
+            copyButton.textContent = "コピー";
             copyButton.disabled = false;
           }, 2000);
         })
@@ -196,3 +197,4 @@ function displaySuccess(shortUrl) {
 function displayError(message) {
   resultArea.innerHTML = `<div class="result-error">${message}</div>`;
 }
+</script>
