@@ -1,0 +1,11 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Main from "../components/Main.astro";
+
+const serviceName = import.meta.env.PUBLIC_SERVICE_NAME;
+const serviceDescription = import.meta.env.PUBLIC_SERVICE_DESCRIPTION;
+---
+
+<Layout title={serviceName} description={serviceDescription}>
+  <Main serviceName={serviceName} serviceDescription={serviceDescription} />
+</Layout>
