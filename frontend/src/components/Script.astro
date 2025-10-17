@@ -74,8 +74,10 @@ async function submitShortenRequest(captchaAnswer) {
   captchaModal.style.display = "none";
 
   try {
-    window.nonstress.generateToken();
-    const token = await window.nonstress.getToken();
+    // @ts-ignore
+    nonstress.generateToken();
+    // @ts-ignore
+    const token = await nonstress.getToken();
     const response = await fetch("/api/create", {
       method: "POST",
       headers: {
