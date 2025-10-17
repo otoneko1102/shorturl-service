@@ -64,8 +64,8 @@ API_KEY="XXXXXX"
 
 ```conf
 # Example of frontend/.env
-VITE_SERVICE_NAME="URL Shortener"
-VITE_SERVICE_DESCRIPTION="シンプルで高速な短縮URLサービス"
+PUBLIC_SERVICE_NAME="URL Shortener"
+PUBLIC_SERVICE_DESCRIPTION="シンプルで高速な短縮URLサービス"
 ```
 
 ### 3. Run commands
