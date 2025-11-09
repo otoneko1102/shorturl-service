@@ -1,0 +1,24 @@
+:root {
+  --primary-color: #007bff;
+  --background-color: #f0f2f5;
+  --container-bg: #ffffff;
+  --text-color: #333333;
+  --error-color: #dc3545;
+  --success-color: #28a745;
+  --radius: 6px;
+}
+
+body {
+  font-family:
+    "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+    Meiryo, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+
+  padding-bottom: 50px;
+}
