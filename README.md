@@ -57,7 +57,7 @@ git clone https://github.com/otoneko1102/shorturl-service.git
 # Example of backend/.env
 PORT=3000
 DOMAIN="example.com"
-DATABASE_PATH="./lib/database.db"
+DATABASE_PATH="../lib/database.db"
 BAN_SCORE=10
 API_KEY="XXXXXX"
 ```
@@ -81,7 +81,8 @@ npm run build
 cd ..
 cd backend
 npm install
-pm2 start index.js --name shorturl-service
+npm run build
+pm2 start dist/server.js --name shorturl-service
 ```
 
 ### 4. Edit nginx
