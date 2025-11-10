@@ -39,9 +39,7 @@
     setTimeout(() => {
       if (isLoadingLibrary) {
         clearInterval(checkInterval);
-        console.error(
-          "nonstress.js の読み込みに失敗しました（タイムアウト）。",
-        );
+        console.error("nonstress.js の読み込みに失敗しました。");
         submitButtonText = "読み込み失敗";
         isSubmitting = true;
       }
@@ -83,7 +81,7 @@
     showCaptchaModal = false;
 
     if (isLoadingLibrary || !nonstress) {
-      displayError("Proof-of-Workライブラリが読み込めません。");
+      displayError("ライブラリが読み込めません。");
       resetSubmitButton();
       return;
     }
@@ -125,13 +123,11 @@
 
   async function handleSubmit() {
     if (isLoadingLibrary) {
-      displayError("ライブラリを準備中です。もう一度お試しください。");
+      displayError("もう一度お試しください。");
       return;
     }
     if (!nonstress) {
-      displayError(
-        "Proof-of-Workライブラリが読み込めません。ページをリロードしてください。",
-      );
+      displayError("ページをリロードしてください。");
       return;
     }
 
@@ -242,7 +238,7 @@
         disabled={isSubmitting || isLoadingLibrary}
       >
         {#if isLoadingLibrary}
-          ライブラリ準備中...
+          Loading...
         {:else}
           {submitButtonText}
         {/if}
@@ -290,7 +286,7 @@
   <div class="modal" on:click|self={handleCancelCaptcha}>
     <div class="modal-content">
       <h3>Captcha</h3>
-      <p>画像に表示されている文字列を、下の選択肢から選んでください。</p>
+      <p>正解を下の選択肢から選んでください。</p>
 
       <div class="captcha-area">
         <div id="captcha-image">

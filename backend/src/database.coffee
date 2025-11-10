@@ -27,4 +27,4 @@ db.exec """
 
 console.log "Database connected at: #{dbPath}"
 
-export default db;
+export default db

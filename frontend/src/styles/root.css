@@ -49,4 +49,5 @@ input,
 textarea,
 button {
   font-family: "Kiwi Maru", sans-serif;
+  font-weight: 300;
 }

@@ -29,7 +29,7 @@ captchaStore = new Map()
 CAPTCHA_EXPIRATION = 5 * 60 * 1000
 
 setInterval (->
-  now = Date.now();
+  now = Date.now()
   for entry of captchaStore.entries()
     [token, { timestamp }] = entry
     if now - timestamp > CAPTCHA_EXPIRATION
@@ -61,7 +61,7 @@ generateDummyOptions = (correctAnswer, count) ->
   length = correctAnswer.length
 
   while dummies.size < count
-    dummy = "";
+    dummy = ""
     for n in [0...length]
       index = Math.floor Math.random() * chars.length
       dummy += chars.charAt index
@@ -133,7 +133,7 @@ app.post "/api/create", (c) ->
       throw new HTTPException 403, message: "CAPTCHA_EXPIRED"
 
     if storedCaptcha.answer.toLowerCase() isnt captchaAnswer.toLowerCase()
-      isFailed = true;
+      isFailed = true
 
     unless token
       throw new HTTPException 403, message: "CAPTCHA_INVALID_TOKEN"
@@ -179,7 +179,7 @@ app.post "/api/create", (c) ->
     throw new HTTPException 400, message: "URL_REQUIRED"
   parsedUrl = null
   try
-    parsedUrl = new URL url;
+    parsedUrl = new URL url
   catch error
     throw new HTTPException 400, message: "URL_INVALID_FORMAT"
   if isInvalid or not domainRegex.test parsedUrl.hostname
@@ -202,7 +202,7 @@ app.post "/api/create", (c) ->
       throw new HTTPException 400, message: "ALIAS_INVALID_CHARACTERS"
     if alias.toLowerCase() is "api"
       throw new HTTPException 400, message: "ALIAS_BANNED"
-    isBannedAlias = false;
+    isBannedAlias = false
     isBannedAlias = bannedAlias.includes alias.toLowerCase()
     if isBannedAlias
       throw new HTTPException 400, message: "ALIAS_BANNED"
@@ -218,7 +218,7 @@ app.post "/api/create", (c) ->
       shortUrl = "https://#{DOMAIN}/#{existingUrl.id}"
       return c.json url: shortUrl
 
-  id = alias or nanoid 7;
+  id = alias or nanoid 7
 
   try
     stmt = db.prepare "INSERT INTO urls (id, original_url) VALUES (?, ?)"
