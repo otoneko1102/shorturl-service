@@ -1,0 +1,59 @@
+---
+
+---
+
+<button id="theme-toggle" aria-label="テーマを切り替える">
+  <img src="/icons/light.svg" alt="ライトテーマ" class="icon light" />
+  <img src="/icons/dark.svg" alt="ダークテーマ" class="icon dark" />
+</button>
+
+<script>
+  const toggleButton = document.getElementById(
+    "theme-toggle",
+  ) as HTMLButtonElement;
+
+  const setTheme = (theme: "light" | "dark") => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  };
+
+  const toggleTheme = () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+  };
+
+  toggleButton.addEventListener("click", toggleTheme);
+</script>
+
+<style>
+  #theme-toggle {
+    background: none;
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+  #theme-toggle:hover {
+    background-color: var(--background-color);
+  }
+
+  .icon {
+    display: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    vertical-align: middle;
+  }
+
+  :root[data-theme="light"] .icon.light {
+    display: inline;
+    filter: invert(1);
+  }
+  :root[data-theme="dark"] .icon.dark {
+    display: inline;
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+import ThemeToggle from "../ui/ThemeToggle.astro";
+
+export interface Props {
+  serviceName: string;
+}
+const { serviceName } = Astro.props;
+---
+
+<header>
+  <div class="header-container">
+    <h1>{serviceName}</h1>
+    <ThemeToggle />
+  </div>
+</header>
+
+<style>
+  header {
+    width: 100%;
+    padding: 1rem 1rem;
+    background-color: var(--container-bg);
+    box-shadow: 0 2px 10px var(--shadow-color);
+    box-sizing: border-box;
+  }
+  .header-container {
+    display: flex;
+    align-items: center;
+    /* max-width: 1000px; */
+    /* margin: 0 auto; */
+  }
+  h1 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1.5rem;
+    margin-right: auto;
+  }
+</style>

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  export let serviceName = "URL Shortener";
   export let serviceDescription = "A simple link shortener.";
 
   let url = "";
@@ -13,7 +12,12 @@
   let captchaImage = "読み込み中...";
   let captchaOptions = [];
   let captchaError = "";
-  let resultHtml = "";
+
+  type ResultStatus = "idle" | "success" | "error";
+  let resultStatus: ResultStatus = "idle";
+  let resultMessage = "";
+  let copyButtonText = "コピー";
+  let isCopying = false;
 
   let nonstress;
   let isLoadingLibrary = true;
@@ -130,14 +134,18 @@
       displayError("URLを入力してください。");
       return;
     }
-    resultHtml = "";
+
+    resultStatus = "idle";
+    resultMessage = "";
+
     await fetchAndShowCaptcha();
   }
 
   function handleClear() {
     url = "";
     alias = "";
-    resultHtml = "";
+    resultStatus = "idle";
+    resultMessage = "";
   }
 
   function handleCancelCaptcha() {
@@ -146,30 +154,29 @@
   }
 
   function displaySuccess(shortUrl) {
-    resultHtml = `
-      <div class="result-success">
-        <p>短縮URLを生成しました！</p>
-        <div class="short-url-box">
-          <a href="${shortUrl}" target="_blank" rel="noopener noreferrer">${shortUrl}</a>
-          <button id="copy-button-internal" class="copy-button-style">コピー</button>
-        </div>
-      </div>
-    `;
-    setTimeout(() => {
-      const copyButton = document.getElementById("copy-button-internal");
-      if (copyButton) {
-        copyButton.addEventListener("click", () =>
-          handleCopy(shortUrl, copyButton),
-        );
-      }
-    }, 0);
+    resultStatus = "success";
+    resultMessage = shortUrl;
   }
 
   function displayError(message) {
-    resultHtml = `<div class="result-error">${message}</div>`;
+    resultStatus = "error";
+    resultMessage = message;
   }
 
-  async function handleCopy(shortUrl, copyButtonElement) {
+  async function handleCopy() {
+    const shortUrl = resultMessage;
+
+    const setCopyButtonState = (text: string, disabled: boolean) => {
+      copyButtonText = text;
+      isCopying = disabled;
+      if (disabled) {
+        setTimeout(() => {
+          copyButtonText = "コピー";
+          isCopying = false;
+        }, 2000);
+      }
+    };
+
     const fallbackCopy = (text) => {
       const textArea = document.createElement("textarea");
       textArea.value = text;
@@ -181,7 +188,7 @@
       textArea.select();
       try {
         document.execCommand("copy");
-        setCopyButtonState("完了！", copyButtonElement);
+        setCopyButtonState("完了！", true);
       } catch (err) {
         console.error("Fallback copy failed", err);
         alert("コピーに失敗しました。");
@@ -189,21 +196,10 @@
       document.body.removeChild(textArea);
     };
 
-    const setCopyButtonState = (text, btn) => {
-      if (btn) {
-        btn.textContent = text;
-        btn.disabled = true;
-        setTimeout(() => {
-          btn.textContent = "コピー";
-          btn.disabled = false;
-        }, 2000);
-      }
-    };
-
     if (navigator.clipboard && window.isSecureContext) {
       try {
         await navigator.clipboard.writeText(shortUrl);
-        setCopyButtonState("完了！", copyButtonElement);
+        setCopyButtonState("完了！", true);
       } catch (err) {
         console.error("Copy failed", err);
         fallbackCopy(shortUrl);
@@ -216,7 +212,6 @@
 
 <div id="app">
   <div class="container">
-    <h1>{serviceName}</h1>
     <p class="subtitle">{serviceDescription}</p>
 
     <form on:submit|preventDefault={handleSubmit}>
@@ -255,7 +250,27 @@
     </form>
 
     <div id="result-area">
-      {@html resultHtml}
+      {#if resultStatus === "success"}
+        <div class="result-success">
+          <p>短縮URLを生成しました！</p>
+          <div class="short-url-box">
+            <a href={resultMessage} target="_blank" rel="noopener noreferrer">
+              {resultMessage}
+            </a>
+            <button
+              class="copy-button-style"
+              on:click={handleCopy}
+              disabled={isCopying}
+            >
+              {copyButtonText}
+            </button>
+          </div>
+        </div>
+      {:else if resultStatus === "error"}
+        <div class="result-error">
+          {resultMessage}
+        </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -310,12 +325,9 @@
     background: var(--container-bg);
     padding: 2rem 2.5rem;
     border-radius: var(--radius);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px var(--shadow-color);
     text-align: center;
-  }
-  h1 {
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    transition: background-color 0.2s;
   }
   .subtitle {
     color: #6c757d;
@@ -327,20 +339,24 @@
     text-align: left;
     margin-bottom: 5px;
   }
+
   form input {
     width: 100%;
     padding: 12px;
     margin-bottom: 1rem;
-    border: 1px solid #cccccc;
+    border: 1px solid var(--input-border);
     border-radius: var(--radius);
     box-sizing: border-box;
     transition: border-color 0.3s;
     font-size: 16px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
   }
   form input:focus {
     outline: none;
     border-color: var(--primary-color);
   }
+
   .submit-button {
     width: 100%;
     margin: 5px 0;
@@ -365,22 +381,23 @@
     margin-top: 1.5rem;
     text-align: left;
   }
-  :global(.result-success),
-  :global(.result-error) {
+
+  .result-success,
+  .result-error {
     padding: 1rem;
     border-radius: var(--radius);
   }
-  :global(.result-success) {
+  .result-success {
     background-color: #e9f7ef;
     border: 1px solid var(--success-color);
   }
-  :global(.result-error) {
+  .result-error {
     background-color: #f8d7da;
     color: var(--error-color);
     border: 1px solid var(--error-color);
     text-align: center;
   }
-  :global(.short-url-box) {
+  .short-url-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -390,14 +407,14 @@
     margin-top: 0.5rem;
     border: 1px solid #dddddd;
   }
-  :global(.short-url-box a) {
+  .short-url-box a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: bold;
     word-break: break-all;
     font-size: 16px;
   }
-  :global(.copy-button-style) {
+  .copy-button-style {
     padding: 0.5rem 1rem;
     border: 1px solid var(--primary-color);
     background-color: transparent;
@@ -405,7 +422,15 @@
     border-radius: var(--radius);
     cursor: pointer;
     margin-left: 1rem;
+    white-space: nowrap;
   }
+  .copy-button-style:disabled {
+    background-color: #e9f7ef;
+    color: var(--success-color);
+    border-color: var(--success-color);
+    cursor: not-allowed;
+  }
+
   .modal {
     display: flex;
     position: fixed;
@@ -419,8 +444,9 @@
     justify-content: center;
     align-items: center;
   }
+
   .modal-content {
-    background-color: #ffffff;
+    background-color: var(--container-bg);
     padding: 2rem;
     border-radius: var(--radius);
     width: 90%;
@@ -435,13 +461,14 @@
     margin: 1rem 0;
   }
   #captcha-image {
-    border: 1px solid #cccccc;
+    border: 1px solid var(--input-border);
     border-radius: var(--radius);
     line-height: 0;
     background-color: #f9f9f9;
     min-width: 150px;
     min-height: 50px;
   }
+
   :global(#captcha-image svg) {
     display: block;
     width: 100%;
@@ -460,12 +487,13 @@
     width: 100%;
     margin: 1.5rem 0;
   }
+
   .captcha-option-button {
     padding: 12px;
     font-size: 1rem;
     font-family: monospace, sans-serif;
-    background-color: #f0f0f0;
-    border: 1px solid #cccccc;
+    background-color: var(--background-color);
+    border: 1px solid var(--input-border);
     border-radius: var(--radius);
     color: var(--text-color);
     cursor: pointer;
@@ -475,9 +503,10 @@
     word-break: break-all;
   }
   .captcha-option-button:hover {
-    background-color: #e2e2e2;
+    background-color: var(--container-bg);
     border-color: #999999;
   }
+
   #captcha-cancel {
     background-color: #6c757d;
   }
