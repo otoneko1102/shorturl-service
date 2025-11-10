@@ -16,13 +16,18 @@
   type ResultStatus = "idle" | "success" | "error";
   let resultStatus: ResultStatus = "idle";
   let resultMessage = "";
-  let copyButtonText = "コピー";
   let isCopying = false;
 
   let nonstress;
   let isLoadingLibrary = true;
 
+  let urlInput: HTMLInputElement;
+
   onMount(() => {
+    if (window.innerWidth > 768 && urlInput) {
+      urlInput.focus();
+    }
+
     const checkInterval = setInterval(() => {
       if (typeof (window as any).nonstress !== "undefined") {
         clearInterval(checkInterval);
@@ -166,12 +171,10 @@
   async function handleCopy() {
     const shortUrl = resultMessage;
 
-    const setCopyButtonState = (text: string, disabled: boolean) => {
-      copyButtonText = text;
-      isCopying = disabled;
-      if (disabled) {
+    const setCopyingState = (state: boolean) => {
+      isCopying = state;
+      if (state === true) {
         setTimeout(() => {
-          copyButtonText = "コピー";
           isCopying = false;
         }, 2000);
       }
@@ -188,7 +191,7 @@
       textArea.select();
       try {
         document.execCommand("copy");
-        setCopyButtonState("完了！", true);
+        setCopyingState(true);
       } catch (err) {
         console.error("Fallback copy failed", err);
         alert("コピーに失敗しました。");
@@ -199,7 +202,7 @@
     if (navigator.clipboard && window.isSecureContext) {
       try {
         await navigator.clipboard.writeText(shortUrl);
-        setCopyButtonState("完了！", true);
+        setCopyingState(true);
       } catch (err) {
         console.error("Copy failed", err);
         fallbackCopy(shortUrl);
@@ -222,6 +225,7 @@
         placeholder="https://www.example.com/long-url"
         required
         bind:value={url}
+        bind:this={urlInput}
       />
       <label for="alias-input">Custom ID (Optional):</label>
       <input
@@ -261,8 +265,13 @@
               class="copy-button-style"
               on:click={handleCopy}
               disabled={isCopying}
+              aria-label="コピー"
             >
-              {copyButtonText}
+              {#if isCopying}
+                <span class="copy-icon check-icon"></span>
+              {:else}
+                <span class="copy-icon copy-icon-path"></span>
+              {/if}
             </button>
           </div>
         </div>
@@ -339,7 +348,6 @@
     text-align: left;
     margin-bottom: 5px;
   }
-
   form input {
     width: 100%;
     padding: 12px;
@@ -356,7 +364,6 @@
     outline: none;
     border-color: var(--primary-color);
   }
-
   .submit-button {
     width: 100%;
     margin: 5px 0;
@@ -387,9 +394,11 @@
     padding: 1rem;
     border-radius: var(--radius);
   }
+
   .result-success {
     background-color: #e9f7ef;
     border: 1px solid var(--success-color);
+    color: #155724;
   }
   .result-error {
     background-color: #f8d7da;
@@ -397,6 +406,7 @@
     border: 1px solid var(--error-color);
     text-align: center;
   }
+
   .short-url-box {
     display: flex;
     justify-content: space-between;
@@ -407,28 +417,59 @@
     margin-top: 0.5rem;
     border: 1px solid #dddddd;
   }
+
   .short-url-box a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: bold;
-    word-break: break-all;
-    font-size: 16px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow-x: auto;
+    min-width: 0;
   }
+
   .copy-button-style {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+    line-height: 0;
     border: 1px solid var(--primary-color);
     background-color: transparent;
-    color: var(--primary-color);
     border-radius: var(--radius);
     cursor: pointer;
-    margin-left: 1rem;
-    white-space: nowrap;
+    color: var(--primary-color);
   }
   .copy-button-style:disabled {
-    background-color: #e9f7ef;
-    color: var(--success-color);
-    border-color: var(--success-color);
     cursor: not-allowed;
+  }
+
+  .copy-icon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    background-color: currentColor;
+  }
+  .copy-icon-path {
+    mask-image: url("/icons/copy.svg");
+    mask-size: cover;
+  }
+  .check-icon {
+    mask-image: url("/icons/check.svg");
+    mask-size: cover;
+  }
+
+  :global([data-theme="dark"]) .result-success {
+    background-color: #2e7d32;
+    border-color: var(--success-color);
+    color: #e8f5e9;
+  }
+  :global([data-theme="dark"]) .result-error {
+    background-color: #5c0011;
+    color: var(--error-color);
+    border-color: var(--error-color);
+  }
+  :global([data-theme="dark"]) .short-url-box {
+    background: #ffffff;
+    border: 1px solid #dddddd;
   }
 
   .modal {
@@ -444,7 +485,6 @@
     justify-content: center;
     align-items: center;
   }
-
   .modal-content {
     background-color: var(--container-bg);
     padding: 2rem;
@@ -468,7 +508,6 @@
     min-width: 150px;
     min-height: 50px;
   }
-
   :global(#captcha-image svg) {
     display: block;
     width: 100%;
@@ -487,7 +526,6 @@
     width: 100%;
     margin: 1.5rem 0;
   }
-
   .captcha-option-button {
     padding: 12px;
     font-size: 1rem;
@@ -506,7 +544,6 @@
     background-color: var(--container-bg);
     border-color: #999999;
   }
-
   #captcha-cancel {
     background-color: #6c757d;
   }

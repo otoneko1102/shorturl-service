@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap");
+
 :root {
   --primary-color: #007bff;
   --background-color: #f0f2f5;
@@ -5,9 +7,12 @@
   --text-color: #333333;
   --error-color: #dc3545;
   --success-color: #28a745;
+  --success-textcolor: #333333;
   --radius: 6px;
   --shadow-color: rgba(0, 0, 0, 0.1);
   --input-border: #cccccc;
+  --header-height: 4rem;
+  --footer-height: 3rem;
 }
 
 [data-theme="dark"] {
@@ -15,23 +20,33 @@
   --background-color: #121212;
   --container-bg: #1e1e1e;
   --text-color: #e0e0e0;
-  --error-color: #cf6679;
-  --success-color: #66bb6a;
+  --error-color: #7e2636;
+  --success-color: #347b38;
   --shadow-color: rgba(0, 0, 0, 0.5);
   --input-border: #444444;
 }
 
 body {
-  font-family:
-    "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans",
-    Meiryo, sans-serif;
+  font-family: "Kiwi Maru", sans-serif;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   margin: 0;
   background-color: var(--background-color);
   color: var(--text-color);
   transition:
     background-color 0.2s,
     color 0.2s;
+
+  height: 100vh;
+  box-sizing: border-box;
+  padding-top: var(--header-height);
+  padding-bottom: var(--footer-height);
+  overflow: hidden;
+}
+
+body > *,
+input,
+textarea,
+button {
+  font-family: "Kiwi Maru", sans-serif;
 }
