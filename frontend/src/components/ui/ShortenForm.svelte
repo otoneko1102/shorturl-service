@@ -1,11 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  // Props (Astroから渡される)
   export let serviceName = "URL Shortener";
   export let serviceDescription = "A simple link shortener.";
 
-  // --- 状態管理 ---
   let url = "";
   let alias = "";
   let isSubmitting = false;
@@ -17,36 +15,29 @@
   let captchaError = "";
   let resultHtml = "";
 
-  // --- ライブラリ読み込み管理 ---
   let nonstress;
-  let isLoadingLibrary = true; // ★ライブラリ読み込み中フラグ
+  let isLoadingLibrary = true;
 
   onMount(() => {
-    // 100msごとに window.nonstress が定義されるかチェックする
     const checkInterval = setInterval(() => {
       if (typeof (window as any).nonstress !== "undefined") {
-        clearInterval(checkInterval); // 見つかったらインターバル停止
+        clearInterval(checkInterval);
         nonstress = (window as any).nonstress;
-        isLoadingLibrary = false; // ★読み込み完了
+        isLoadingLibrary = false;
       }
-    }, 100); // 100ミリ秒ごと
+    }, 100);
 
-    // タイムアウト処理（例: 5秒待っても読み込めなかったらエラー）
     setTimeout(() => {
       if (isLoadingLibrary) {
-        // 5秒後も読み込めていなかったら
         clearInterval(checkInterval);
         console.error(
           "nonstress.js の読み込みに失敗しました（タイムアウト）。",
         );
-        // ボタンテキストをエラー表示に変更
         submitButtonText = "読み込み失敗";
-        isSubmitting = true; // 操作不可にする
+        isSubmitting = true;
       }
-    }, 5000); // 5秒でタイムアウト
+    }, 5000);
   });
-
-  // --- 関数 ---
 
   function resetSubmitButton() {
     submitButtonText = "短縮する";
@@ -56,7 +47,6 @@
   async function fetchAndShowCaptcha() {
     isSubmitting = true;
     submitButtonText = "認証中...";
-    // ... (以降の処理は変更なし)
     try {
       const response = await fetch("/api/captcha");
       if (!response.ok) {
@@ -65,7 +55,7 @@
       const data = await response.json();
 
       captchaToken = data.token;
-      captchaImage = data.image; // SVG文字列
+      captchaImage = data.image;
       captchaOptions = data.options;
 
       showCaptchaModal = true;
@@ -83,7 +73,6 @@
     isSubmitting = true;
     showCaptchaModal = false;
 
-    // ★nonstress の存在を再度確認
     if (isLoadingLibrary || !nonstress) {
       displayError("Proof-of-Workライブラリが読み込めません。");
       resetSubmitButton();
@@ -91,13 +80,11 @@
     }
 
     try {
-      // if (!nonstress) { ... } // このチェックは上で行った
       nonstress.generateToken();
       const token = await nonstress.getToken();
 
       const response = await fetch("/api/create", {
         method: "POST",
-        // ... (以降の fetch 処理は変更なし)
         headers: {
           "Content-Type": "application/json",
         },
@@ -123,13 +110,11 @@
       displayError(error.message || "サーバーとの通信に失敗しました。");
     } finally {
       resetSubmitButton();
-      alias = ""; // エイリアスのみリセット
+      alias = "";
     }
   }
 
-  // フォーム送信ハンドラ
   async function handleSubmit() {
-    // ★ライブラリ読み込みチェックを追加
     if (isLoadingLibrary) {
       displayError("ライブラリを準備中です。もう一度お試しください。");
       return;
@@ -160,8 +145,6 @@
     resetSubmitButton();
   }
 
-  // --- 結果表示 & コピー処理 ---
-  // (displaySuccess, displayError, handleCopy 関数は変更なし)
   function displaySuccess(shortUrl) {
     resultHtml = `
       <div class="result-success">
@@ -318,7 +301,6 @@
 {/if}
 
 <style>
-  /* ... (前回の回答と同じスタイル定義) ... */
   #app {
     width: 100%;
     max-width: 500px;
