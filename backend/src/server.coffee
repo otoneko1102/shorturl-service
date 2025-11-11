@@ -11,12 +11,12 @@ import { randomUUID } from "crypto"
 import db from "./database.js"
 import isUserBanned from "./isUserBanned.js"
 
-import config from "../lib/config.js"
+import config from "./config.js"
+import errorMessages from "./errorMessages.js"
+
 import { bannedDomains, isStrict } from "../lib/bannedDomains.js"
 import { bannedAlias } from "../lib/bannedAlias.js"
 import { bannedWords } from "../lib/bannedWords.js"
-
-import errorMessages from "./errorMessages.js"
 
 domainRegex = /^((?:[a-z0-9][a-z0-9-]*[a-z0-9]*|xn--[a-z0-9-]+)\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/
 
