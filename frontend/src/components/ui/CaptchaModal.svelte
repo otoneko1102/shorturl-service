@@ -92,14 +92,12 @@
     min-height: 50px;
   }
 
-  /* --- 修正箇所：このブロックを追加 --- */
   :global(#captcha-image svg) {
     display: block;
     width: 100%;
     height: auto;
     border-radius: var(--radius);
   }
-  /* --- 修正箇所ここまで --- */
 
   #captcha-error {
     color: var(--error-color);
