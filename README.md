@@ -73,7 +73,7 @@ PUBLIC_SERVICE_DESCRIPTION="シンプルで高速な短縮URLサービス"
 以下のコマンドを順に実行します。
 pm2の `--name` はオプションです。
 
-```bash
+```sh
 cd shorturl-service
 cd frontend
 npm install
@@ -96,7 +96,7 @@ pm2 start dist/server.js --name shorturl-service
 以下は一例です。  
 例ではwww付きをwww無しにリダイレクトさせていますが、不必要なら削除してください。
 
-```bash
+```sh
 nano /etc/nginx/sites-available/%DOMAIN%
 ```
 
@@ -168,7 +168,7 @@ server {
 
 #### 4.2. Apply config
 
-```bash
+```sh
 sudo ln -s /etc/nginx/sites-available/%DOMAIN% /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
@@ -176,7 +176,7 @@ sudo systemctl restart nginx
 
 #### 4.3. Apply Certbot
 
-```bash
+```sh
 sudo certbot --nginx -d %DOMAIN% -d www.%DOMAIN%
 sudo nginx -t
 sudo systemctl restart nginx
@@ -229,3 +229,11 @@ export { bannedWords };
 
 #### 5.3. Ban Domains
 
+```js
+const isStrict = false; // true: Exact match / false: Partial match
+const bannedDomains = [
+  "example.com"
+];
+
+export { bannedDomains, isStrict };
+```

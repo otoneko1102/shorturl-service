@@ -15,7 +15,8 @@ import config from "../lib/config.js"
 import { bannedDomains, isStrict } from "../lib/bannedDomains.js"
 import { bannedAlias } from "../lib/bannedAlias.js"
 import { bannedWords } from "../lib/bannedWords.js"
-import errorMessages from "../lib/errorMessages.js"
+
+import errorMessages from "./errorMessages.js"
 
 domainRegex = /^((?:[a-z0-9][a-z0-9-]*[a-z0-9]*|xn--[a-z0-9-]+)\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/
 
