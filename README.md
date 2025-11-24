@@ -227,13 +227,3 @@ const bannedWords = [
 export { bannedWords };
 ```
 
-#### 5.3. Ban Domains
-
-```js
-const isStrict = false; // true: Exact match / false: Partial match
-const bannedDomains = [
-  "example.com"
-];
-
-export { bannedDomains, isStrict };
-```
