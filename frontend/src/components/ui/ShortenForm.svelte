@@ -93,7 +93,7 @@
     let captchaFailed = false;
 
     try {
-      nonstress.generateToken();
+      // nonstress.generateToken();
       const token = await nonstress.getToken();
 
       const response = await fetch("/api/create", {

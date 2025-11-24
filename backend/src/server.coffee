@@ -6,7 +6,7 @@ import * as punycode from "punycode"
 import { nanoid } from "nanoid"
 import * as captcha from "svg-captcha"
 import axios from "axios"
-import { randomUUID } from "crypto"
+import { randomUUID, createHash } from "crypto"
 
 import db from "./database.js"
 import isUserBanned from "./isUserBanned.js"
@@ -143,8 +143,12 @@ app.post "/api/create", (c) ->
     data = response?.data or null
 
     if 200 <= response.status and response.status < 300 and data
-      hashedIp = data.user_data.ip
-      success = data.pass and data.risk_rate isnt "bot"
+      ip = data.user?.ip
+      fingerprint = data.user?.device_fingerprint
+      hash = createHash 'sha256'
+      hash.update "#{ip}:#{fingerprint}"
+      userId = hash.digest 'hex'
+      success = data.security?.pass
       scoreChange = if (not isFailed and success) then 1 else 0
 
       stmt = db.prepare """
@@ -155,9 +159,9 @@ app.post "/api/create", (c) ->
           count = count + 1,
           created_at = CURRENT_TIMESTAMP
       """
-      stmt.run hashedIp, scoreChange
+      stmt.run userId, scoreChange
 
-      if isUserBanned hashedIp
+      if isUserBanned userId
         throw new HTTPException 403, message: "YOU_ARE_BANNED"
       unless success
         throw new HTTPException 403, message: "CAPTCHA_FAILED"
