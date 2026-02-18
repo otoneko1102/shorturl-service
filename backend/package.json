@@ -14,7 +14,7 @@
   "dependencies": {
     "@hono/node-server": "^1.15.0",
     "axios": "^1.13.5",
-    "better-sqlite3": "^12.2.0",
+    "better-sqlite3": "^12.6.2",
     "dotenv": "^17.3.1",
     "hono": "^4.11.9",
     "nanoid": "^5.1.6",
