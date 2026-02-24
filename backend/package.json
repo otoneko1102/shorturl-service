@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "coffeescript": "^2.7.0",
-    "milkee": "^3.3.0"
+    "milkee": "^3.3.1"
   }
 }
