@@ -7,8 +7,10 @@ const serviceName =
 const serviceDescription =
   (import.meta.env as any).PUBLIC_SERVICE_DESCRIPTION ||
   "A simple link shortener.";
+const requirePassword =
+  (import.meta.env as any).PUBLIC_REQUIRE_PASSWORD === "true";
 ---
 
 <Layout title={serviceName} description={serviceDescription}>
-  <ShortenForm client:load serviceDescription={serviceDescription} />
+  <ShortenForm client:load serviceDescription={serviceDescription} requirePassword={requirePassword} />
 </Layout>

@@ -90,7 +90,7 @@
   }
   .result-success,
   .result-error {
-    padding: 1rem;
+    padding: 0.5rem;
     border-radius: var(--radius);
   }
   .result-success {

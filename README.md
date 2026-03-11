@@ -60,12 +60,17 @@ DOMAIN="example.com"
 DATABASE_PATH="../lib/database.db"
 BAN_SCORE=10
 API_KEY="XXXXXX"
+
+REQUIRE_PASSWORD=true
+USER_PASSWORD=your_secret_password
 ```
 
 ```conf
 # Example of frontend/.env
 PUBLIC_SERVICE_NAME="URL Shortener"
 PUBLIC_SERVICE_DESCRIPTION="シンプルで高速な短縮URLサービス"
+
+PUBLIC_REQUIRE_PASSWORD=true
 ```
 
 ### 3. Run commands

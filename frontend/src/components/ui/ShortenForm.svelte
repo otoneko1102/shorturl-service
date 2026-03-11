@@ -5,6 +5,7 @@
   import CaptchaModal from "./CaptchaModal.svelte";
 
   export let serviceDescription = "A simple link shortener.";
+  export let requirePassword = false;
 
   let url = "";
   let alias = "";
@@ -20,6 +21,8 @@
   type ResultStatus = "idle" | "success" | "error";
   let resultStatus: ResultStatus = "idle";
   let resultMessage = "";
+
+  let password = "";
 
   let nonstress;
   let isLoadingLibrary = true;
@@ -102,6 +105,7 @@
         body: JSON.stringify({
           url: url,
           alias: alias || null,
+          password: requirePassword ? password : undefined,
           captchaToken: captchaToken,
           captchaAnswer: captchaAnswer,
           token,
@@ -113,6 +117,7 @@
       if (response.ok) {
         displaySuccess(data.url);
         alias = "";
+        password = "";
       } else {
         const errorMessage =
           data.error?.message || "不明なエラーが発生しました。";
@@ -146,6 +151,10 @@
       displayError("URLを入力してください。");
       return;
     }
+    if (requirePassword && !password.trim()) {
+      displayError("パスワードを入力してください。");
+      return;
+    }
     resultStatus = "idle";
     resultMessage = "";
     await fetchAndShowCaptcha();
@@ -154,6 +163,7 @@
   function handleClear() {
     url = "";
     alias = "";
+    password = "";
     resultStatus = "idle";
     resultMessage = "";
   }
@@ -181,6 +191,8 @@
     <FormInputs
       bind:url
       bind:alias
+      bind:password
+      {requirePassword}
       bind:urlInput
       {isSubmitting}
       {isLoadingLibrary}
@@ -218,9 +230,10 @@
     transition: background-color 0.2s;
   }
   .subtitle {
+    font-size: 1rem;
     color: #6c757d;
     margin-top: 0;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
   }
 
   :global(#captcha-image svg) {

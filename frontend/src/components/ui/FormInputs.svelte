@@ -6,6 +6,8 @@
   export let isSubmitting: boolean;
   export let isLoadingLibrary: boolean;
   export let submitButtonText: string;
+  export let password: string;
+  export let requirePassword: boolean;
   export let urlInput: HTMLInputElement = undefined;
 
   const dispatch = createEventDispatcher();
@@ -37,6 +39,16 @@
     pattern="[a-zA-Z0-9-_]+"
     bind:value={alias}
   />
+  {#if requirePassword}
+    <label for="password-input">Password:</label>
+    <input
+      type="password"
+      id="password-input"
+      placeholder="パスワード"
+      required
+      bind:value={password}
+    />
+  {/if}
 
   <button
     type="submit"
@@ -59,12 +71,12 @@
   label {
     display: block;
     text-align: left;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
   }
   form input {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 1rem;
+    padding: 10px;
+    margin-bottom: 0.5rem;
     border: 1px solid var(--input-border);
     border-radius: var(--radius);
     box-sizing: border-box;
@@ -80,7 +92,7 @@
   .submit-button {
     width: 100%;
     margin: 5px 0;
-    padding: 12px;
+    padding: 5px;
     border: none;
     border-radius: var(--radius);
     background-color: var(--primary-color);

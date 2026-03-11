@@ -25,6 +25,8 @@ PORT = parseInt process.env.PORT or "2045", 10
 DOMAIN = process.env.DOMAIN
 
 API_KEY = process.env.API_KEY
+USER_PASSWORD = process.env.USER_PASSWORD or ""
+REQUIRE_PASSWORD = process.env.REQUIRE_PASSWORD is "true"
 
 captchaStore = new Map()
 CAPTCHA_EXPIRATION = 5 * 60 * 1000
@@ -119,7 +121,13 @@ app.post "/api/create", (c) ->
     catch
       isInvalid = true
 
-  { url, alias, captchaToken, captchaAnswer, token, key } = body
+  { url, alias, password, captchaToken, captchaAnswer, token, key } = body
+
+  if REQUIRE_PASSWORD
+    unless password
+      throw new HTTPException 400, message: "PASSWORD_REQUIRED"
+    if password isnt USER_PASSWORD
+      throw new HTTPException 403, message: "PASSWORD_INCORRECT"
 
   if not key and (not captchaToken or not captchaAnswer)
     throw new HTTPException 400, message: "CAPTCHA_MISSING"

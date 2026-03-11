@@ -15,6 +15,8 @@ errorMessages =
   ALIAS_BANNED: "このカスタムIDは利用できません"
   ALIAS_ALREADY_EXISTS: "このカスタムIDは既に使用されています"
   DATABASE_INSERT_FAILED: "短縮リンクの作成に失敗しました"
+  PASSWORD_REQUIRED: "パスワードは必須です"
+  PASSWORD_INCORRECT: "パスワードが正しくありません"
   INTERNAL_SERVER_ERROR: "サーバー内部でエラーが発生しました"
   YOU_ARE_BANNED: "このIPアドレスでのアクセスは禁止されています"
 
